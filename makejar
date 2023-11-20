@@ -1,0 +1,31 @@
+#!/usr/bin/sh
+set -e
+
+echo preparing...
+
+# clean up any left over temp directories
+rm -rf /tmp/java_*
+
+# make a temp directory to hold the build
+TEMPDIR=`mktemp -dt java_XXXXXXXXXX`
+# create a directory to hold the compiled class files
+mkdir -p $TEMPDIR/build
+
+echo compiling...
+
+# compile all class files into the build dir
+find -name "*.java" > $TEMPDIR/sources.txt
+javac @$TEMPDIR/sources.txt -d $TEMPDIR/build 
+
+echo packaging...
+
+jar -cfe $TEMPDIR/Magpie.jar Main -C $TEMPDIR/build .
+rm -rf $TEMPDIR/build
+
+cp $TEMPDIR/Magpie.jar .
+
+echo running...
+
+# run the packaged project
+rm -rf $TEMPDIR
+java -jar Magpie.jar
