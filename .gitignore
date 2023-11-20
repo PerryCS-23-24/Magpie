@@ -1,0 +1,3 @@
+# don't add compiled files to repos
+*.jar
+*.class
